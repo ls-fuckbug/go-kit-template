@@ -13,8 +13,7 @@ func (s svcImpl) %s(
 `
 	TemplateServiceInterface = `
 // %s 
-%s(ctx context.Context, req *pb.%sRequest) (*pb.%sResponse, error)
-`
+%s(ctx context.Context, req *pb.%sRequest) (*pb.%sResponse, error)`
 
 	BackendTemplateEndpointMake = `
 func make%sEndpoint(s service.Service) endpoint.Endpoint {
@@ -24,8 +23,8 @@ func make%sEndpoint(s service.Service) endpoint.Endpoint {
 		return resp, nil
 	}
 }
-
 `
+
 	ServiceTemplateEndpointMake = `
 func make%sEndpoint(s service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
@@ -37,38 +36,38 @@ func make%sEndpoint(s service.Service) endpoint.Endpoint {
 		return resp, nil
 	}
 }
+`
 
-`
 	TemplateEndpointMakeCall = `
-%s:         make%sEndpoint(svc),
-`
+%s:         make%sEndpoint(svc),`
+
 	TemplateEndpointStructMember = `
-%s endpoint.Endpoint
-`
+%s endpoint.Endpoint`
+
+	ServiceTemplateTransportStructMember = `
+		%s         grpctransport.Handler`
+
 	BackendTemplateTransportHandler = `
 	%sHandler := httptransport.NewServer(
 		endpoints.%s,
 		decodeHTTP%sRequest,
 		encodeHTTP%sResponse,
 		options...,
-	)
-`
+	)`
 
 	ServiceTemplateTransportHandler = `
 	%sTransport := grpctransport.NewServer(
 		endpoints.%s,
-		decode%sRequest,
-		encode%sResponse,
-	)
-`
+		decodeGRPC%sRequest,
+		encodeGRPC%sResponse,
+	)`
 
 	BackendTemplateTransportHandle = `
-	r.Handle("/", %sHandler).Methods("")
-`
+	r.Handle("/", %sHandler).Methods("")`
 
 	ServiceTemplateTransportHandle = `
-		%s:         %sTransport,
-`
+		%s:         %sTransport,`
+
 	BackendTemplateTransportImpl = `
 func decodeHTTP%sRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request entity.%sReq
@@ -86,21 +85,21 @@ func encodeHTTP%sResponse(ctx context.Context, w http.ResponseWriter, response i
 `
 
 	ServiceTemplateTransportImpl = `
-func (n *grpcServer)%s(ctx context.Context,
+func (g *grpcServer)%s(ctx context.Context,
 	req *pb.%sRequest) (*pb.%sResponse, error) {
-	_, resp, err := n.%s.ServeGRPC(ctx, req)
+	_, resp, err := g.%s.ServeGRPC(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return resp.(*pb.%sResponse), nil
 }
 
-func decode%sRequest(_ context.Context, request interface{}) (interface{}, error) {
+func decodeGRPC%sRequest(_ context.Context, request interface{}) (interface{}, error) {
 	req, _ := request.(*pb.%sRequest)
 	return req, nil
 }
 
-func encode%sResponse(_ context.Context, response interface{}) (interface{}, error) {
+func encodeGRPC%sResponse(_ context.Context, response interface{}) (interface{}, error) {
 	resp, _ := response.(*pb.%sResponse)
 	return resp, nil
 }

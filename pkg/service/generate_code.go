@@ -65,6 +65,7 @@ func generateBackendTemplate(funcName []string) (code string) {
 			greatHumpName)
 	}
 	code += "$"
+	code += "$"
 	for _, name := range funcName {
 		greatHumpName := name
 		smallHumpName := uncapitalize(greatHumpName)
@@ -115,6 +116,12 @@ func generateServiceTemplate(funcName []string) (code string) {
 		greatHumpName := name
 		code += fmt.Sprintf(entity.ServiceTemplateEndpointMake, greatHumpName, greatHumpName,
 			greatHumpName)
+	}
+	code += "$"
+	for _, name := range funcName {
+		greatHumpName := name
+		smallHumpName := uncapitalize(greatHumpName)
+		code += fmt.Sprintf(entity.ServiceTemplateTransportStructMember, smallHumpName)
 	}
 	code += "$"
 	for _, name := range funcName {

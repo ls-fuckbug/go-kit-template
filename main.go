@@ -27,7 +27,7 @@ func main() {
 		// 将结果传递给HTML模板
 		data := gin.H{
 			"func_names": funcNames,
-			"type":       codeType,
+			"code_type":  codeType,
 			"code":       code,
 		}
 		// 显示结果页面
