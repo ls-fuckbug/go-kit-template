@@ -18,7 +18,7 @@
 		}
 
 		.container {
-			max-width: 800px;
+			max-width: 1500px;
 			margin: 0 auto;
 			padding: 1em;
 			background-color: #fff;
@@ -72,7 +72,6 @@
 			box-shadow: 0 0 5px rgba(79, 144, 254, 0.5);
 		}
 
-
 		textarea {
 			width: 100%;
 			background-color: #f5f5f5;
@@ -80,7 +79,9 @@
 			border-radius: 5px;
 			font-size: 16px;
 			font-family: monospace;
-			height: 1000px;    /* 设置代码框的高度为200像素 */
+			resize: none;
+			height: auto;
+			overflow-y: hidden;
 		}
 
 		button[type="submit"] {
@@ -105,7 +106,7 @@
 
 <div class="container">
 	<form action="/generate/code" method="post" onsubmit="removeOutput()">
-		<label for="func_name">输入函数名:</label>
+		<label for="func_name">输入函数名(大驼峰式):</label>
 		<input type="text" name="func_name" id="func_name" value="{{.func_name}}">
 
 		<!-- 添加一个下拉框 -->
@@ -121,8 +122,20 @@
 
 		<div style="height: 20px;"></div> <!-- 这里添加了一个高度为20px的空白元素 -->
 
-		<label for="code">模板代码:</label>
-		<textarea name="code" id="code" readonly>{{.code}}</textarea>
+		<label for="text-area-1">Service层函数实现:</label>
+		<textarea id="text-area-1" readonly></textarea>
+		<label for="text-area-2">Service层接口声明:</label>
+		<textarea id="text-area-2" readonly></textarea>
+		<label for="text-area-3">Endpoint层make函数实现:</label>
+		<textarea id="text-area-3" readonly></textarea>
+		<label for="text-area-4">Endpoint层make函数调用:</label>
+		<textarea id="text-area-4" readonly></textarea>
+		<label for="text-area-5">Transport层handler:</label>
+		<textarea id="text-area-5" readonly></textarea>
+		<label for="text-area-6">Transport层handler调用:</label>
+		<textarea id="text-area-6" readonly></textarea>
+		<label for="text-area-7">Transport层输入输出处理:</label>
+		<textarea id="text-area-7" readonly></textarea>
 
 	</form>
 	<script>
@@ -132,6 +145,17 @@
 			output.value = '';
 			return true;  // 返回 true 以继续提交表单
 		}
+		function splitAndAssign(text, delimiter) {
+			let parts = text.split(delimiter);
+			for (let i = 1; i < parts.length; i++) {
+				let element = document.getElementById("text-area-" + i);
+				if (element != null) {
+					element.value = parts[i];
+				}
+				console.log(parts[i])
+			}
+		}
+		splitAndAssign("{{.code}}", "$");
 	</script>
 </div>
 </body>
