@@ -3,19 +3,21 @@ package service
 import (
 	"fmt"
 	"ls.com/kit/pkg/entity"
+	"strings"
 	"unicode"
 )
 
 // Generate 定义处理函数
-func Generate(funcName string, codeType string) (code string) {
-	if len(funcName) == 0 || len(codeType) == 0 {
+func Generate(funcNames string, codeType string) (code string) {
+	if len(funcNames) == 0 || len(codeType) == 0 {
 		return "请输入函数名并选择代码类型"
 	} else {
+		funcNameArr := strings.Split(funcNames, "_")
 		switch codeType {
 		case "backend":
-			code = generateBackendTemplate([]string{funcName})
+			code = generateBackendTemplate(funcNameArr)
 		case "service":
-			code = generateServiceTemplate([]string{funcName})
+			code = generateServiceTemplate(funcNameArr)
 		default:
 			code = "不支持的codeType"
 		}
@@ -49,13 +51,18 @@ func generateBackendTemplate(funcName []string) (code string) {
 	code += "$"
 	for _, name := range funcName {
 		greatHumpName := name
-		code += fmt.Sprintf(entity.BackendTemplateEndpointMake, greatHumpName, greatHumpName,
-			greatHumpName)
+		code += fmt.Sprintf(entity.TemplateEndpointStructMember, greatHumpName)
 	}
 	code += "$"
 	for _, name := range funcName {
 		greatHumpName := name
 		code += fmt.Sprintf(entity.TemplateEndpointMakeCall, greatHumpName, greatHumpName)
+	}
+	code += "$"
+	for _, name := range funcName {
+		greatHumpName := name
+		code += fmt.Sprintf(entity.BackendTemplateEndpointMake, greatHumpName, greatHumpName,
+			greatHumpName)
 	}
 	code += "$"
 	for _, name := range funcName {
@@ -96,15 +103,20 @@ func generateServiceTemplate(funcName []string) (code string) {
 	code += "$"
 	for _, name := range funcName {
 		greatHumpName := name
-		code += fmt.Sprintf(entity.ServiceTemplateEndpointMake, greatHumpName, greatHumpName,
-			greatHumpName)
+		code += fmt.Sprintf(entity.TemplateEndpointStructMember, greatHumpName)
 	}
-	code += ""
+	code += "$"
 	for _, name := range funcName {
 		greatHumpName := name
 		code += fmt.Sprintf(entity.TemplateEndpointMakeCall, greatHumpName, greatHumpName)
 	}
-	code += ""
+	code += "$"
+	for _, name := range funcName {
+		greatHumpName := name
+		code += fmt.Sprintf(entity.ServiceTemplateEndpointMake, greatHumpName, greatHumpName,
+			greatHumpName)
+	}
+	code += "$"
 	for _, name := range funcName {
 		greatHumpName := name
 		smallHumpName := uncapitalize(greatHumpName)

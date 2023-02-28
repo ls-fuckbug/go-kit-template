@@ -2,7 +2,6 @@ package entity
 
 const (
 	TemplateServiceImpl = `
-
 // %s 
 func (s svcImpl) %s(
   ctx context.Context, 
@@ -18,7 +17,6 @@ func (s svcImpl) %s(
 `
 
 	BackendTemplateEndpointMake = `
-
 func make%sEndpoint(s service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req, _ := request.(*entity.%sReq)
@@ -29,11 +27,13 @@ func make%sEndpoint(s service.Service) endpoint.Endpoint {
 
 `
 	ServiceTemplateEndpointMake = `
-
 func make%sEndpoint(s service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		req, _ := request.(*pb.%sReq)
-		resp := s.%s(ctx, req)
+		req, _ := request.(*pb.%sRequest)
+		resp, err := s.%s(ctx, req)
+		if err != nil {
+			return nil, err
+		}
 		return resp, nil
 	}
 }
@@ -70,7 +70,6 @@ func make%sEndpoint(s service.Service) endpoint.Endpoint {
 		%s:         %sTransport,
 `
 	BackendTemplateTransportImpl = `
-
 func decodeHTTP%sRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request entity.%sReq
 	if e := json.NewDecoder(r.Body).Decode(&request); e != nil {
@@ -87,7 +86,6 @@ func encodeHTTP%sResponse(ctx context.Context, w http.ResponseWriter, response i
 `
 
 	ServiceTemplateTransportImpl = `
-
 func (n *grpcServer)%s(ctx context.Context,
 	req *pb.%sRequest) (*pb.%sResponse, error) {
 	_, resp, err := n.%s.ServeGRPC(ctx, req)
