@@ -1,27 +1,36 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"ls.com/kit/pkg/entity"
 	"strings"
 	"unicode"
 )
 
 // Generate 定义处理函数
-func Generate(funcNames string, codeType string) (code string) {
-	if len(funcNames) == 0 || len(codeType) == 0 {
+func Generate(funcNames string, codeType string) string {
+	funcNameArr := strings.Split(funcNames, "_")
+	if len(funcNameArr) == 0 || len(codeType) == 0 {
 		return "请输入函数名并选择代码类型"
 	} else {
-		funcNameArr := strings.Split(funcNames, "_")
+		var codeMap = make(map[string]string)
 		switch codeType {
 		case "backend":
-			code = generateBackendTemplate(funcNameArr)
+			generateBackendTemplate(funcNameArr, codeMap)
 		case "service":
-			code = generateServiceTemplate(funcNameArr)
+			generateServiceTemplate(funcNameArr, codeMap)
 		default:
-			code = "不支持的codeType"
+			return ""
 		}
-		return
+		generateCommonTemplate(funcNameArr, codeMap)
+
+		jsonStr, err := json.Marshal(codeMap)
+		if err != nil {
+			log.Println("err", err)
+		}
+		return string(jsonStr)
 	}
 }
 
@@ -35,114 +44,52 @@ func uncapitalize(s string) string {
 	return string(r)
 }
 
-func generateBackendTemplate(funcName []string) (code string) {
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.TemplateServiceImpl, greatHumpName, greatHumpName,
-			greatHumpName, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.TemplateServiceInterface, greatHumpName, greatHumpName,
-			greatHumpName, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.TemplateEndpointStructMember, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.TemplateEndpointMakeCall, greatHumpName, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.BackendTemplateEndpointMake, greatHumpName, greatHumpName,
-			greatHumpName)
-	}
-	code += "$"
-	code += "$"
+func generateBackendTemplate(funcName []string, codeMap map[string]string) {
 	for _, name := range funcName {
 		greatHumpName := name
 		smallHumpName := uncapitalize(greatHumpName)
-		code += fmt.Sprintf(entity.BackendTemplateTransportHandler, smallHumpName, greatHumpName,
-			greatHumpName, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		smallHumpName := uncapitalize(greatHumpName)
-		code += fmt.Sprintf(entity.BackendTemplateTransportHandle, smallHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.BackendTemplateTransportImpl, greatHumpName, greatHumpName,
-			greatHumpName, greatHumpName)
-	}
 
+		codeMap["Endpoint层make函数定义"] += fmt.Sprintf(entity.BackendTemplateEndpointMake,
+			greatHumpName, greatHumpName, greatHumpName)
+		codeMap["Transport层handler"] += fmt.Sprintf(entity.BackendTemplateTransportHandler, smallHumpName,
+			greatHumpName, greatHumpName, greatHumpName)
+		codeMap["Transport层handle处理"] += fmt.Sprintf(entity.BackendTemplateTransportHandle, smallHumpName)
+		codeMap["Transport层输入输出"] += fmt.Sprintf(entity.BackendTemplateTransportImpl, greatHumpName, greatHumpName,
+			greatHumpName, greatHumpName)
+	}
 	return
 }
 
-func generateServiceTemplate(funcName []string) (code string) {
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.TemplateServiceImpl, greatHumpName, greatHumpName,
-			greatHumpName, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.TemplateServiceInterface, greatHumpName, greatHumpName,
-			greatHumpName, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.TemplateEndpointStructMember, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.TemplateEndpointMakeCall, greatHumpName, greatHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		code += fmt.Sprintf(entity.ServiceTemplateEndpointMake, greatHumpName, greatHumpName,
-			greatHumpName)
-	}
-	code += "$"
+func generateServiceTemplate(funcName []string, codeMap map[string]string) {
 	for _, name := range funcName {
 		greatHumpName := name
 		smallHumpName := uncapitalize(greatHumpName)
-		code += fmt.Sprintf(entity.ServiceTemplateTransportStructMember, smallHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		smallHumpName := uncapitalize(greatHumpName)
-		code += fmt.Sprintf(entity.ServiceTemplateTransportHandler, smallHumpName, greatHumpName,
+
+		codeMap["Endpoint层make函数定义"] += fmt.Sprintf(entity.ServiceTemplateEndpointMake, greatHumpName,
+			greatHumpName, greatHumpName)
+		codeMap["Transport层结构体成员"] += fmt.Sprintf(entity.ServiceTemplateTransportStructMember,
+			smallHumpName)
+		codeMap["Transport层handler"] += fmt.Sprintf(entity.ServiceTemplateTransportHandler, smallHumpName,
+			greatHumpName, greatHumpName, greatHumpName)
+		codeMap["Transport层handle处理"] += fmt.Sprintf(entity.ServiceTemplateTransportHandle, smallHumpName,
+			smallHumpName)
+		codeMap["Transport层输入输出"] += fmt.Sprintf(entity.ServiceTemplateTransportImpl, greatHumpName,
+			greatHumpName, greatHumpName, smallHumpName, greatHumpName, greatHumpName, greatHumpName,
 			greatHumpName, greatHumpName)
 	}
-	code += "$"
+	return
+}
+
+func generateCommonTemplate(funcName []string, codeMap map[string]string) {
 	for _, name := range funcName {
 		greatHumpName := name
-		smallHumpName := uncapitalize(greatHumpName)
-		code += fmt.Sprintf(entity.ServiceTemplateTransportHandle, smallHumpName, smallHumpName)
-	}
-	code += "$"
-	for _, name := range funcName {
-		greatHumpName := name
-		smallHumpName := uncapitalize(greatHumpName)
-		code += fmt.Sprintf(entity.ServiceTemplateTransportImpl, greatHumpName, greatHumpName,
-			greatHumpName, smallHumpName, greatHumpName, greatHumpName, greatHumpName,
+		codeMap["Service层方法定义"] += fmt.Sprintf(entity.TemplateServiceImpl, greatHumpName, greatHumpName,
 			greatHumpName, greatHumpName)
+		codeMap["Service层接口声明"] += fmt.Sprintf(entity.TemplateServiceInterface, greatHumpName, greatHumpName,
+			greatHumpName, greatHumpName)
+		codeMap["Endpoint层结构体成员"] += fmt.Sprintf(entity.TemplateEndpointStructMember, greatHumpName)
+		codeMap["Endpoint层make函数调用"] += fmt.Sprintf(entity.TemplateEndpointMakeCall, greatHumpName, greatHumpName)
+
 	}
 	return
 }
