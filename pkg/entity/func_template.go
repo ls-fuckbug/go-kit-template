@@ -17,7 +17,7 @@ func (s svcImpl) %s(
 
 	BackendTemplateEndpointMake = `
 func make%sEndpoint(s service.Service) endpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req, _ := request.(*entity.%sReq)
 		resp := s.%s(ctx, req)
 		return resp, nil
@@ -27,7 +27,7 @@ func make%sEndpoint(s service.Service) endpoint.Endpoint {
 
 	ServiceTemplateEndpointMake = `
 func make%sEndpoint(s service.Service) endpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req, _ := request.(*pb.%sRequest)
 		resp, err := s.%s(ctx, req)
 		if err != nil {

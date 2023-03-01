@@ -168,6 +168,7 @@
 				// 创建button元素
 				const copyButton = document.createElement('button')
 				copyButton.setAttribute('style', button)
+				copyButton.setAttribute('type', 'button')
 				copyButton.innerText = '复制'
 				copyButton.addEventListener('click', () => {
 					item.select()
