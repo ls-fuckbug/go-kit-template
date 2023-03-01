@@ -12,8 +12,8 @@ import (
 // Generate 定义处理函数
 func Generate(funcNames string, codeType string) string {
 	funcNameArr := strings.Split(funcNames, "_")
-	if len(funcNameArr) == 0 || len(codeType) == 0 {
-		return "请输入函数名并选择代码类型"
+	if len(funcNames) == 0 || len(codeType) == 0 {
+		return ""
 	} else {
 		var codeMap = make(map[string]string)
 		switch codeType {
