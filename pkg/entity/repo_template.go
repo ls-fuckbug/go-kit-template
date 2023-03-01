@@ -13,7 +13,7 @@ func (s *serviceImpl) %s(
 		logSugar.Warnw("%s 失败", "err", err)
 		return nil, err
 	}
-	logSugar.Infow("call pay rpc func [%s] end", "resp", resp)
+	logSugar.Infow("call rpc func [%s] end", "resp", resp)
 	return resp, err
 }
 `
