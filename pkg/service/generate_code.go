@@ -98,6 +98,8 @@ func generateCommonTemplate(funcName []string, codeMap map[string]string) {
 			greatHumpName, greatHumpName, greatHumpName, greatHumpName, greatHumpName)
 		codeMap["ZRepo层base函数"] += fmt.Sprintf(entity.TemplateRepoSampleFuncImpl, greatHumpName, greatHumpName,
 			greatHumpName)
+		codeMap["UnitTest单测Service层"] += fmt.Sprintf(entity.TemplateUnitTestServiceFuncImpl, greatHumpName,
+			greatHumpName, greatHumpName, greatHumpName, greatHumpName, greatHumpName)
 	}
 	return
 }
