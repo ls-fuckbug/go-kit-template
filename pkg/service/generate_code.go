@@ -60,6 +60,8 @@ func generateBackendTemplate(funcName []string, codeMap map[string]string) {
 		codeMap["Transport层handler调用"] += fmt.Sprintf(entity.BackendTemplateTransportHandle, smallHumpName)
 		codeMap["Transport层输入输出"] += fmt.Sprintf(entity.BackendTemplateTransportImpl, greatHumpName, greatHumpName,
 			greatHumpName, greatHumpName)
+		codeMap["UnitTest单测Service层"] += fmt.Sprintf(entity.TemplateBackendUnitTestServiceFuncImpl, greatHumpName,
+			greatHumpName, greatHumpName, greatHumpName, greatHumpName)
 	}
 	return
 }
@@ -84,6 +86,8 @@ func generateServiceTemplate(funcName []string, codeMap map[string]string) {
 		codeMap["Transport层输入输出"] += fmt.Sprintf(entity.ServiceTemplateTransportImpl, greatHumpName,
 			greatHumpName, greatHumpName, smallHumpName, greatHumpName, greatHumpName, greatHumpName,
 			greatHumpName, greatHumpName)
+		codeMap["UnitTest单测Service层"] += fmt.Sprintf(entity.TemplateServiceUnitTestServiceFuncImpl, greatHumpName,
+			greatHumpName, greatHumpName, greatHumpName, greatHumpName, greatHumpName)
 	}
 	return
 }
@@ -94,12 +98,10 @@ func generateCommonTemplate(funcName []string, codeMap map[string]string) {
 
 		codeMap["Endpoint层成员"] += fmt.Sprintf(entity.TemplateEndpointStructMember, greatHumpName)
 		codeMap["Endpoint层make函数调用"] += fmt.Sprintf(entity.TemplateEndpointMakeCall, greatHumpName, greatHumpName)
-		codeMap["ZRepo层Service调用函数"] += fmt.Sprintf(entity.TemplateRepoServiceCallImpl, greatHumpName, greatHumpName,
+		codeMap["Repo层Service调用函数"] += fmt.Sprintf(entity.TemplateRepoServiceCallImpl, greatHumpName, greatHumpName,
 			greatHumpName, greatHumpName, greatHumpName, greatHumpName, greatHumpName)
-		codeMap["ZRepo层base函数"] += fmt.Sprintf(entity.TemplateRepoSampleFuncImpl, greatHumpName, greatHumpName,
+		codeMap["Repo层base函数"] += fmt.Sprintf(entity.TemplateRepoSampleFuncImpl, greatHumpName, greatHumpName,
 			greatHumpName)
-		codeMap["UnitTest单测Service层"] += fmt.Sprintf(entity.TemplateUnitTestServiceFuncImpl, greatHumpName,
-			greatHumpName, greatHumpName, greatHumpName, greatHumpName, greatHumpName)
 	}
 	return
 }
