@@ -26,7 +26,7 @@ const (
 		%s:         %sTransport,`
 
 	BackendTemplateTransportImpl = `
-func decodeHTTP%sRequest(_ context.Context, r *http.Request) (interface{}, error) {
+func decodeHTTP%sRequest (_ context.Context, r *http.Request) (interface{}, error) {
 	var request entity.%sRequest
 	if e := json.NewDecoder(r.Body).Decode(&request); e != nil {
 		return nil, e
@@ -34,7 +34,7 @@ func decodeHTTP%sRequest(_ context.Context, r *http.Request) (interface{}, error
 	return &request, nil
 }
 
-func encodeHTTP%sResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+func encodeHTTP%sResponse (ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	resp, _ := response.(*entity.%sResponse)
 	middleware.LogAndAddRequestID(ctx, &resp.CommonRet)
 	return json.NewEncoder(w).Encode(resp)
@@ -42,7 +42,7 @@ func encodeHTTP%sResponse(ctx context.Context, w http.ResponseWriter, response i
 `
 
 	ServiceTemplateTransportImpl = `
-func (g *grpcServer)%s(ctx context.Context,
+func (g *grpcServer) %s (ctx context.Context,
 	req *pb.%sRequest) (*pb.%sResponse, error) {
 	_, resp, err := g.%s.ServeGRPC(ctx, req)
 	if err != nil {
@@ -51,12 +51,12 @@ func (g *grpcServer)%s(ctx context.Context,
 	return resp.(*pb.%sResponse), nil
 }
 
-func decodeGRPC%sRequest(_ context.Context, request interface{}) (interface{}, error) {
+func decodeGRPC%sRequest (_ context.Context, request interface{}) (interface{}, error) {
 	req, _ := request.(*pb.%sRequest)
 	return req, nil
 }
 
-func encodeGRPC%sResponse(_ context.Context, response interface{}) (interface{}, error) {
+func encodeGRPC%sResponse (_ context.Context, response interface{}) (interface{}, error) {
 	resp, _ := response.(*pb.%sResponse)
 	return resp, nil
 }
