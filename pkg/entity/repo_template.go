@@ -14,6 +14,9 @@ func (s *serviceImpl) %s(
 		return nil, err
 	}
 	logSugar.Infow("call rpc func [%s] end", "resp", resp)
+	if res.Code != pb.RetCode_OK {
+		return nil, errors.New("rpc调用失败")
+	}
 	return resp, err
 }
 `
